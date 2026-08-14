@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LWANDA DIGITAL HUB - Your Investment Your Future</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, Segoe UI, sans-serif; }
+    body { background: #000; color: #fff; padding-bottom: 80px; }
+    .hidden { display: none !important; }
+    button, input { font-family: inherit; }
+
+    :root {
+      --bg: #000;
+      --card: #0a0f1a;
+      --blue: #00aaff;
+      --blue2: #0066ff;
+      --green: #00ff88;
+      --red: #ff4444;
+      --gold: #f7931a;
+      --muted: #aaa;
+      --border: #173451;
+    }
+
+    /* AUTH */
+    #authPage {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: radial-gradient(circle at top, #00334d, #000 60%);
+    }
+    .auth-container { width: 100%; max-width: 430px; }
+    .auth-logo { text-align: center; margin-bottom: 25px; }
+    .auth-logo h1 { color: var(--blue); font-size: 27px; }
+    .auth-logo p { color: #aaa; font-size: 12px; margin-top: 5px; }
+    .auth-card { background: var(--card); border: 1px solid var(--border); border-radius: 15px; padding: 25px; box-shadow: 0 0 30px rgba(0,170,255,.12); }
+    .auth-card h2 { text-align: center; color: var(--blue); margin-bottom: 20px; }
+    .auth-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .auth-tab { flex:1; padding: 11px; border: 1px solid #234; background: #05090f; color: #aaa; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .auth-tab.active { background: var(--blue); color: #000; }
+    .auth-form { display: none; }
+    .auth-form.active { display: block; }
+    .input-group { margin-bottom: 14px; }
+    .input-group label { display: block; color: #aaa; font-size: 12px; margin-bottom: 6px; }
+    .input-group input { width: 100%; padding: 13px; background: #000; border: 1px solid #234; border-radius: 8px; color: #fff; outline: none; }
+    .input-group input:focus { border-color: var(--blue); }
+    .auth-btn { width: 100%; padding: 13px; border: 0; border-radius: 8px; background: var(--blue); color: #000; font-weight: bold; cursor: pointer; }
+    .auth-message { font-size: 12px; text-align: center; margin-top: 12px; }
+    .success { color: var(--green); }
+    .error { color: var(--red); }
+
+    /* HEADER */
+    header { padding: 15px; text-align: center; border-bottom: 1px solid #1a2a4a; }
+    header h1 { color: var(--blue); font-size: 22px; }
+    header p { color: #aaa; font-size: 12px; }
+    .user-bar { background: #050b12; border-bottom: 1px solid #14263a; padding: 8px 15px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
+    .user-bar strong { color: var(--blue); }
+    .logout-btn { background: transparent; border: 1px solid var(--red); color: var(--red); padding: 5px 9px; border-radius: 5px; cursor: pointer; }
+
+    /* HERO */
+    .hero { margin: 15px; padding: 25px 18px; border: 1px solid var(--blue); border-radius: 14px; background: linear-gradient(135deg,#001b2c,#000); }
+    .hero h2 { color: var(--blue); font-size: 24px; }
+    .hero p { color: #bbb; font-size: 13px; line-height: 1.6; margin-top: 8px; }
+
+    /* MARKET */
+    .market-card { margin: 15px; background: linear-gradient(135deg,#00111e,#000); border: 1px solid var(--blue); border-radius: 14px; padding: 18px; }
+    .market-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .market-title { color: var(--blue); font-size: 16px; font-weight: bold; }
+    .live-status { font-size: 10px; color: var(--green); display: flex; align-items: center; gap: 5px; }
+    .live-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
+    @keyframes blink { 50% { opacity: .25; } }
+    .gold-price { font-size: 30px; font-weight: bold; color: #fff; margin-top: 16px; }
+    .gold-symbol { color: #777; font-size: 11px; margin-top: 3px; }
+    .gold-change { display: inline-block; margin-top: 10px; padding: 7px 10px; border-radius: 7px; font-weight: bold; font-size: 13px; background: #06140e; color: var(--green); }
+    .gold-change.down { background: #180707; color: var(--red); }
+    .market-meta { display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; color: #777; font-size: 10px; }
+    .market-actions { display: flex; gap: 8px; margin-top: 12px; }
+    .market-actions button { flex:1; border: 1px solid var(--blue); background: #00101a; color: var(--blue); border-radius: 7px; padding: 8px; cursor: pointer; font-weight: bold; font-size: 11px; }
+    .market-actions button:hover { background: var(--blue); color: #000; }
+    .market-error { margin-top: 12px; padding: 10px; border-radius: 7px; background: #160606; border: 1px solid #522; color: var(--red); font-size: 11px; }
+
+    /* BITCOIN */
+    .bitcoin-card { margin: 15px; background: linear-gradient(135deg,#171006,#000); border: 1px solid var(--gold); border-radius: 14px; padding: 18px; }
+    .bitcoin-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .bitcoin-title { color: var(--gold); font-size: 16px; font-weight: bold; }
+    .bitcoin-live { color: var(--green); font-size: 10px; display: flex; align-items: center; gap: 5px; }
+    .bitcoin-price { font-size: 30px; font-weight: bold; margin-top: 16px; color: #fff; }
+    .bitcoin-change { display: inline-block; margin-top: 10px; padding: 7px 10px; border-radius: 7px; background: #06140e; color: var(--green); font-weight: bold; font-size: 13px; }
+    .bitcoin-change.down { background: #180707; color: var(--red); }
+    .bitcoin-meta { margin-top: 12px; color: #777; font-size: 10px; }
+    .bitcoin-error { margin-top: 12px; padding: 10px; border-radius: 7px; background: #160606; border: 1px solid #522; color: var(--red); font-size: 11px; }
+
+    /* BITCOIN IMAGE */
+    .bitcoin-image-card { margin: 15px; height: 230px; border-radius: 14px; overflow: hidden; position: relative; border: 1px solid var(--gold); background: #111; }
+    .bitcoin-image-card img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 1; transition: opacity .7s ease; }
+    .bitcoin-image-overlay { position: absolute; left: 0; right: 0; bottom: 0; padding: 35px 15px 15px; background: linear-gradient(transparent, rgba(0,0,0,.95)); }
+    .bitcoin-image-overlay h3 { color: var(--gold); font-size: 18px; }
+    .bitcoin-image-overlay p { color: #ddd; font-size: 11px; margin-top: 4px; }
+    .bitcoin-dots { position: absolute; right: 12px; bottom: 12px; display: flex; gap: 5px; }
+    .bitcoin-dot { width: 7px; height: 7px; border-radius: 50%; background: #777; transition: .3s; }
+    .bitcoin-dot.active { background: var(--gold); transform: scale(1.25); }
+
+    /* ANNOUNCEMENTS */
+    .announcement-box { margin: 15px; background: #0a0f1a; border: 1px solid var(--blue); border-radius: 12px; padding: 15px; }
+    .announcement-box h3 { color: var(--blue); margin-bottom: 12px; }
+    .announcement { background: #080808; border-left: 3px solid var(--blue); padding: 12px; border-radius: 7px; margin-bottom: 10px; }
+    .announcement-title { color: var(--blue); font-weight: bold; }
+    .announcement-date { color: #777; font-size: 10px; margin-top: 5px; }
+    .announcement-text { color: #ccc; font-size: 12px; line-height: 1.5; margin-top: 6px; }
+
+    /* STRATEGY */
+    .strategy-card { margin:0 15px 15px; background: linear-gradient(135deg,#0a0f1a,#001220); border: 1px solid var(--blue); border-radius: 12px; padding: 15px; }
+    .strategy-card h3 { color: var(--blue); margin-bottom: 8px; }
+    .strategy-card p { font-size: 12px; color: #aaa; }
+    .strategy-stats { display: flex; justify-content: space-between; margin-top: 12px; }
+    .stat { text-align: center; }
+    .stat .val { color: var(--blue); font-weight: bold; }
+    .stat .lab { color: #aaa; font-size: 10px; }
+
+    /* BUTTONS */
+    .btn { background: var(--blue); color: #000; border: 0; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; }
+    .btn-danger { background: var(--red); color: #fff; }
+
+    /* PAGES */
+    .page-header { padding: 15px; }
+    .page-header h2 { color: var(--blue); }
+    .page-header p { color: #aaa; font-size: 12px; margin-top: 5px; }
+
+    /* MACHINES */
+    .machine-card { background: #070d14; border: 1px solid #174263; border-radius: 12px; margin: 0 15px 15px; overflow: hidden; }
+    .machine-content { padding: 15px; }
+    .machine-content h3 { color: var(--blue); }
+    .machine-row { font-size: 12px; margin-top: 7px; color: #ccc; }
+    .machine-row b { color: #fff; }
+    .buy-btn { background: var(--blue); color: #000; text-align: center; padding: 12px; font-weight: bold; cursor: pointer; }
+
+    /* INCOME */
+    .income-header { padding: 15px; }
+    .income-center { margin: 15px; background: #0a0f1a; border: 1px solid #1a2a4a; border-radius: 12px; padding: 20px; }
+    .income-center .val { color: var(--blue); font-size: 32px; font-weight: bold; margin: 5px 0; }
+    .income-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+    .income-box { background: #070d14; border: 1px solid #174263; border-radius: 10px; padding: 12px; }
+    .income-box .val { color: var(--blue); font-size: 18px; font-weight: bold; }
+    .purchased-box { margin: 15px; background: #0a0f1a; border: 1px solid #1a2a4a; border-radius: 12px; padding: 15px; }
+
+    /* PROFILE */
+    .wallet-box { margin:0 15px 15px; background: #0a0f1a; border: 2px solid var(--blue); border-radius: 12px; padding: 20px; display: flex; justify-content: space-around; text-align: center; }
+    .wallet-box .val { color: var(--blue); font-size: 24px; font-weight: bold; }
+    .grid-box { margin:0 15px 15px; background: #0a0f1a; border: 1px solid #1a2a4a; border-radius: 12px; padding: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 15px; }
+    .grid-item { text-align: center; cursor: pointer; font-size: 11px; }
+    .grid-icon { width: 50px; height: 50px; background: var(--blue); border-radius: 12px; margin: auto auto 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #000; }
+
+    /* REFERRAL */
+    .referral-box { background: #0a0f1a; border: 1px solid var(--gold); border-radius: 12px; padding: 15px; margin: 0 15px 15px; }
+    .referral-box h4 { color: var(--gold); margin-bottom: 6px; }
+    .referral-link { display: flex; align-items: center; gap: 8px; background: #000; padding: 10px; border-radius: 8px; border: 1px solid #234; margin: 8px 0; }
+    .referral-link input { background: transparent; border: none; color: #fff; width: 100%; font-size: 12px; outline: none; }
+    .referral-btn { background: var(--gold); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
+    .referral-details { font-size: 12px; color: #aaa; margin-top: 8px; }
+    .referral-details span { color: #fff; }
+
+    /* ACTION */
+    .action-page { padding: 15px; }
+    .action-card { background: #0a0f1a; border: 1px solid #1a2a4a; border-radius: 12px; padding: 20px; margin-top: 15px; }
+    .deposit-number { background: #00101a; border: 1px solid var(--blue); padding: 15px; border-radius: 10px; text-align: center; margin: 15px 0; }
+    .deposit-number .number { color: var(--blue); font-size: 22px; font-weight: bold; margin-top: 6px; }
+    .deposit-record { background: #111; border: 1px solid #222; border-radius: 8px; padding: 12px; margin-bottom: 10px; font-size: 12px; line-height: 1.7; }
+    .status-pending { color: #ffaa00; }
+    .status-approved { color: var(--blue); }
+    .status-rejected { color: var(--red); }
+
+    /* ADMIN */
+    .admin-section { margin: 15px; background: #0a0f1a; border: 1px solid var(--blue); border-radius: 12px; padding: 15px; }
+    .admin-section h3 { color: var(--blue); margin-bottom: 10px; }
+    .admin-item { background: #111; border: 1px solid #222; border-radius: 8px; padding: 10px; margin-bottom: 8px; font-size: 12px; }
+    .admin-buttons { display: flex; gap: 6px; margin-top: 8px; }
+    .approve-btn { background: var(--blue); color: #000; border:0; padding: 7px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    .reject-btn, .delete-btn { background: var(--red); color: #fff; border:0; padding: 7px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+    /* SUPPORT */
+    .support { position: fixed; right: 15px; bottom: 75px; z-index: 90; }
+    .support a { display: flex; align-items: center; gap: 7px; background: var(--blue); color: #000; padding: 11px 14px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 12px; box-shadow: 0 4px 15px #000; }
+
+    /* BOTTOM NAV */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #000; border-top: 1px solid #1a2a4a; display: flex; justify-content: space-around; padding: 8px 0; z-index: 100; }
+    .nav-item { text-align: center; font-size: 10px; color: #777; cursor: pointer; }
+    .nav-item.active { color: var(--blue); }
+    .nav-icon { font-size: 21px; margin-bottom: 3px; }
+
+    @media (max-width:450px) { .grid { gap: 8px; } .grid-icon { width:44px; height:44px; } .support a { padding:10px; font-size:10px; } .gold-price, .bitcoin-price { font-size:26px; } .bitcoin-image-card { height:210px; } }
+  </style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="authPage">
+  <div class="auth-container">
+    <div class="auth-logo"><h1>LWANDA DIGITAL HUB</h1><p>Your Investment. Your Future.</p></div>
+    <div class="auth-card">
+      <div class="auth-tabs"><button class="auth-tab active" onclick="switchAuth('login')">LOGIN</button><button class="auth-tab" onclick="switchAuth('register')">REGISTER</button></div>
+      <form id="loginForm" class="auth-form active">
+        <h2>Welcome Back</h2>
+        <div class="input-group"><label>PHONE / LOGIN NUMBER</label><input id="loginNumber" type="text" required placeholder="Enter phone number"></div>
+        <div class="input-group"><label>PASSWORD</label><input id="loginPassword" type="password" required placeholder="Enter password"></div>
+        <button class="auth-btn">LOGIN</button>
+        <div id="loginMessage" class="auth-message"></div>
+      </form>
+      <form id="registerForm" class="auth-form">
+        <h2>Create Account</h2>
+        <div class="input-group"><label>USERNAME</label><input id="registerUsername" type="text" required minlength="3" placeholder="Choose username"></div>
+        <div class="input-group"><label>PHONE / LOGIN NUMBER</label><input id="registerNumber" type="text" required placeholder="Enter phone number"></div>
+        <div class="input-group"><label>PASSWORD</label><input id="registerPassword" type="password" required minlength="6" placeholder="Create password"></div>
+        <div class="input-group"><label>CONFIRM PASSWORD</label><input id="registerConfirm" type="password" required placeholder="Repeat password"></div>
+        <button class="auth-btn">CREATE ACCOUNT</button>
+        <div id="registerMessage" class="auth-message"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- WEBSITE -->
+<div id="website" class="hidden">
+<header><h1>LWANDA DIGITAL HUB</h1><p>Your Investment. Your Future.</p></header>
+<div class="user-bar"><div>Logged in as: <strong id="loggedUsername"></strong></div><button class="logout-btn" onclick="logout()">LOGOUT</button></div>
+
+<!-- HOME -->
+<section id="home">
+  <div class="hero"><h2>Welcome to LWANDA DIGITAL HUB</h2><p>Manage your account, view available plans, monitor market information and track your investment activity from one place.</p></div>
+
+  <!-- GOLD -->
+  <div class="market-card">
+    <div class="market-top"><div class="market-title">XAU/USD — GOLD</div><div class="live-status"><span class="live-dot"></span>LIVE MARKET</div></div>
+    <div id="goldPrice" class="gold-price">Loading...</div>
+    <div class="gold-symbol">Gold / US Dollar</div>
+    <div id="goldChange" class="gold-change">Loading 24H change...</div>
+    <div class="market-meta"><span>Source: <span id="marketSource">Market API</span></span><span>Updated: <span id="goldUpdated">--</span></span></div>
+    <div id="marketError" class="market-error hidden"></div>
+    <div class="market-actions"><button onclick="fetchGoldPrice()">↻ REFRESH</button></div>
+  </div>
+
+  <!-- BITCOIN -->
+  <div class="bitcoin-card">
+    <div class="bitcoin-top"><div class="bitcoin-title">₿ BTC/USD — BITCOIN</div><div class="bitcoin-live"><span class="live-dot"></span>LIVE MARKET</div></div>
+    <div id="bitcoinPrice" class="bitcoin-price">Loading...</div>
+    <div id="bitcoinChange" class="bitcoin-change">Loading 24H change...</div>
+    <div class="bitcoin-meta">Source: CoinGecko &nbsp;|&nbsp; Updated: <span id="bitcoinUpdated">--</span></div>
+    <div id="bitcoinError" class="bitcoin-error hidden"></div>
+  </div>
+
+  <!-- BITCOIN IMAGE -->
+  <div class="bitcoin-image-card">
+    <img id="bitcoinImage" src="https://images.unsplash.com/photo-1518546305927-5a555bb7020d?auto=format&fit=crop&w=1200&q=85" alt="Bitcoin">
+    <div class="bitcoin-image-overlay"><h3>Bitcoin Market</h3><p>Bitcoin and cryptocurrency market information</p></div>
+    <div class="bitcoin-dots"><span class="bitcoin-dot active" id="btcDot0"></span><span class="bitcoin-dot" id="btcDot1"></span><span class="bitcoin-dot" id="btcDot2"></span><span class="bitcoin-dot" id="btcDot3"></span></div>
+  </div>
+
+  <!-- ANNOUNCEMENTS -->
+  <div class="announcement-box"><h3>📢 Latest Announcements</h3><div id="publicAnnouncements">No announcements available.</div></div>
+
+  <!-- STRATEGY -->
+  <div class="strategy-card"><h3><span class="live-dot"></span> Live Trading Strategy</h3><p>Market information is displayed for informational purposes. Investment decisions should not rely solely on this market card.</p><div class="strategy-stats"><div class="stat"><div class="val">LIVE</div><div class="lab">STATUS</div></div><div class="stat"><div class="val">24/7</div><div class="lab">MONITORING</div></div><div class="stat"><div class="val">BTC/USD</div><div class="lab">MARKET</div></div></div></div>
+  <button class="btn" style="margin:0 15px;width:calc(100% - 30px)" onclick="showSection('machines')">VIEW INVESTMENT PLANS</button>
+</section>
+
+<!-- MACHINES -->
+<section id="machines" class="hidden">
+  <div class="page-header"><h2>Investment Plans</h2><p>Review available plans and submit a purchase request.</p></div>
+  <div id="plansContainer"></div>
+</section>
+
+<!-- INCOME -->
+<section id="income" class="hidden">
+  <div class="income-header"><h1>Income</h1><p style="color:#aaa;font-size:12px">Your earnings and purchased machines</p></div>
+  <div class="income-center"><div style="color:#aaa;font-size:12px">INCOME CENTRE</div><div class="val" id="totalIncome">UGX 0</div><div class="income-grid"><div class="income-box"><div class="val" id="todayIncome">UGX 0</div><div style="font-size:11px;color:#aaa">TODAY</div></div><div class="income-box"><div class="val" id="activeMachines">0</div><div style="font-size:11px;color:#aaa">ACTIVE MACHINES</div></div></div></div>
+  <div class="purchased-box"><h2 style="color:var(--blue);font-size:18px">My Purchased Machines</h2><div id="purchasedList" style="margin-top:15px">No purchased machines.</div></div>
+</section>
+
+<!-- PROFILE (upgraded with referral & registration details) -->
+<section id="profile" class="hidden">
+  <h2 style="color:var(--blue);text-align:center;margin:15px">My Profile</h2>
+
+  <!-- Registration details -->
+  <div style="margin:0 15px 15px; background:#0a0f1a; border:1px solid #1a2a4a; border-radius:12px; padding:15px;">
+    <div style="display:flex; justify-content:space-between; font-size:13px; color:#aaa;">
+      <span>📱 <span id="profilePhone" style="color:#fff;">--</span></span>
+      <span>👤 <span id="profileUsername" style="color:#fff;">--</span></span>
+    </div>
+  </div>
+
+  <!-- Wallet & Balance -->
+  <div class="wallet-box">
+    <div><div style="color:#aaa;font-size:13px">Wallet</div><div class="val" id="wallet">UGX 0</div></div>
+    <div><div style="color:#aaa;font-size:13px">Balance</div><div class="val" id="balance">UGX 0</div></div>
+  </div>
+
+  <!-- REFERRAL SECTION -->
+  <div class="referral-box">
+    <h4>🔗 Invite & Earn</h4>
+    <p style="font-size:12px; color:#aaa; margin-bottom:6px;">Share your referral link and earn rewards when they join.</p>
+    <div class="referral-link">
+      <input type="text" id="referralLinkInput" readonly value="Loading...">
+      <button class="referral-btn" onclick="copyReferral()">COPY</button>
+    </div>
+    <div class="referral-details">
+      Your referral ID: <span id="refIdDisplay">--</span>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid-box">
+    <div class="grid">
+      <div class="grid-item" onclick="showSection('deposit')"><div class="grid-icon">＋</div>Deposit</div>
+      <div class="grid-item" onclick="withdraw()"><div class="grid-icon">↕</div>Withdraw</div>
+      <div class="grid-item" onclick="showSection('team')"><div class="grid-icon">👥</div>My Team</div>
+      <div class="grid-item" onclick="showSection('admin')"><div class="grid-icon">🔒</div>Admin</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOSIT -->
+<section id="deposit" class="hidden action-page">
+  <h2>Deposit</h2>
+  <div class="action-card">
+    <p>Send your payment using your approved payment method and then submit the transaction ID below.</p>
+    <div class="deposit-number"><div style="font-size:12px;color:#aaa">AIRTEL MONEY NUMBER</div><div class="number">0759956193</div></div>
+    <div class="input-group"><label>DEPOSIT AMOUNT (UGX)</label><input type="number" id="depositAmount" min="1" placeholder="Example: 20000"></div>
+    <div class="input-group"><label>TRANSACTION ID</label><input type="text" id="transactionId" maxlength="100" placeholder="Enter transaction ID"></div>
+    <button class="btn" onclick="submitDeposit()">SUBMIT DEPOSIT</button>
+    <div id="depositMessage" class="auth-message"></div>
+    <div style="margin-top:20px"><h3 style="color:var(--blue);margin-bottom:12px">My Deposit History</h3><div id="depositHistory">No deposits yet.</div></div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team" class="hidden action-page"><h2>My Team: <span id="teamCount">0</span></h2><div class="action-card"><p>Your team information can be connected to a referral system when a secure backend is added.</p></div></section>
+
+<!-- ADMIN -->
+<section id="admin" class="hidden">
+  <h2 style="color:var(--blue);text-align:center;margin:15px">Admin Panel</h2>
+  <div id="adminLogin" class="admin-section"><h3>Admin Login</h3><input type="password" id="adminPass" placeholder="Admin password" style="width:100%;padding:12px;background:#000;color:#fff;border:1px solid var(--blue);border-radius:8px"><button class="btn" style="margin-top:10px" onclick="loginAdmin()">LOGIN</button></div>
+  <div id="adminDashboard" class="hidden">
+    <div class="admin-section"><h3>📊 Statistics</h3><div id="adminStats"></div></div>
+    <div class="admin-section"><h3>📢 Announcements</h3><div class="input-group"><label>ANNOUNCEMENT TITLE</label><input id="announcementTitle" type="text" placeholder="Announcement title"></div><div class="input-group"><label>MESSAGE</label><input id="announcementText" type="text" placeholder="Write announcement"></div><button class="btn" onclick="publishAnnouncement()">PUBLISH ANNOUNCEMENT</button><div id="adminAnnouncements" style="margin-top:15px"></div></div>
+    <div class="admin-section"><h3>💰 Pending Deposits</h3><div id="pendingDeposits">No pending deposits.</div></div>
+    <div class="admin-section"><h3>💵 Pending Withdrawals</h3><div id="pendingWithdrawals">No pending withdrawals.</div></div>
+    <div class="admin-section"><h3>💎 Pending Machines</h3><div id="pendingMachines">No pending machines.</div></div>
+    <div class="admin-section"><h3>👥 Members</h3><div id="newMembers">No members.</div></div>
+  </div>
+</section>
+
+<!-- WHATSAPP -->
+<div class="support"><a href="https://wa.me/256727464025" target="_blank" rel="noopener">💬 WhatsApp Support</a></div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="showSection('home',this)"><div class="nav-icon">⌂</div>Home</div>
+  <div class="nav-item" onclick="showSection('machines',this)"><div class="nav-icon">◆</div>Machines</div>
+  <div class="nav-item" onclick="showSection('deposit',this)"><div class="nav-icon">＋</div>Deposit</div>
+  <div class="nav-item" onclick="showSection('income',this)"><div class="nav-icon">↗</div>Income</div>
+  <div class="nav-item" onclick="showSection('profile',this)"><div class="nav-icon">●</div>Profile</div>
+</div>
+</div>
+
+<script>
+/* ==============================================
+   CONFIG
+=============================================== */
+const MARKET_API_URL = "https://YOUR-BACKEND-DOMAIN.example/api/xau-usd";
+const ADMIN_PASS = "admin123";
+const plans = [
+  [20000,42000], [25000,52000], [45000,150000], [150000,400000],
+  [200000,400000], [350000,650000], [500000,1250000], [600000,1400000], [950000,2450000]
+];
+let currentUser = null;
+let marketTimer = null, bitcoinPriceTimer = null, bitcoinImageTimer = null;
+
+/* ==============================================
+   STORAGE HELPERS
+=============================================== */
+function getUsers(){ return JSON.parse(localStorage.getItem("lwandaUsers") || "{}"); }
+function saveUsers(users){ localStorage.setItem("lwandaUsers", JSON.stringify(users)); }
+function getAnnouncements(){ return JSON.parse(localStorage.getItem("lwandaAnnouncements") || "[]"); }
+function saveAnnouncements(data){ localStorage.setItem("lwandaAnnouncements", JSON.stringify(data)); }
+async function hashPassword(pw){ const data = new TextEncoder().encode(pw); const hash = await crypto.subtle.digest("SHA-256", data); return Array.from(new Uint8Array(hash)).map(x=>x.toString(16).padStart(2,"0")).join(""); }
+
+/* ==============================================
+   AUTH
+=============================================== */
+function switchAuth(type){
+  document.querySelectorAll(".auth-tab").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".auth-form").forEach(x=>x.classList.remove("active"));
+  if(type==="login"){ document.querySelectorAll(".auth-tab")[0].classList.add("active"); document.getElementById("loginForm").classList.add("active"); }
+  else { document.querySelectorAll(".auth-tab")[1].classList.add("active"); document.getElementById("registerForm").classList.add("active"); }
+}
+
+document.getElementById("registerForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+  const username = document.getElementById("registerUsername").value.trim();
+  const number = document.getElementById("registerNumber").value.trim();
+  const password = document.getElementById("registerPassword").value;
+  const confirm = document.getElementById("registerConfirm").value;
+  const message = document.getElementById("registerMessage");
+  if(username.length<3){ message.className="auth-message error"; message.innerText="Username is too short."; return; }
+  if(password.length<6){ message.className="auth-message error"; message.innerText="Password must have at least 6 characters."; return; }
+  if(password!==confirm){ message.className="auth-message error"; message.innerText="Passwords do not match."; return; }
+  const users=getUsers();
+  if(users[number]){ message.className="auth-message error"; message.innerText="Phone number already registered."; return; }
+  const passwordHash=await hashPassword(password);
+  users[number]={ username, number, passwordHash, wallet:0, balance:0, machines:[], deposits:[], withdrawals:[], registeredAt:new Date().toISOString() };
+  saveUsers(users);
+  message.className="auth-message success"; message.innerText="Account created successfully.";
+  e.target.reset();
+  setTimeout(()=>{ switchAuth("login"); document.getElementById("loginNumber").value=number; }, 700);
+});
+
+document.getElementById("loginForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+  const number = document.getElementById("loginNumber").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const message = document.getElementById("loginMessage");
+  const users=getUsers();
+  const user=users[number];
+  if(!user){ message.className="auth-message error"; message.innerText="Invalid login details."; return; }
+  const hash=await hashPassword(password);
+  if(hash!==user.passwordHash){ message.className="auth-message error"; message.innerText="Invalid login details."; return; }
+  currentUser=number;
+  sessionStorage.setItem("lwandaLoggedUser", number);
+  openWebsite();
+});
+
+function openWebsite(){
+  const users=getUsers();
+  if(!currentUser || !users[currentUser]){ logout(); return; }
+  document.getElementById("authPage").classList.add("hidden");
+  document.getElementById("website").classList.remove("hidden");
+  document.getElementById("loggedUsername").innerText=users[currentUser].username;
+  renderPlans(); updateData(); loadDepositHistory(); loadIncomePage(); loadAnnouncements();
+  showSection("home");
+  startMarketUpdates(); startBitcoinUpdates();
+}
+
+function logout(){
+  currentUser=null; sessionStorage.removeItem("lwandaLoggedUser");
+  if(marketTimer){ clearInterval(marketTimer); marketTimer=null; }
+  if(bitcoinPriceTimer){ clearInterval(bitcoinPriceTimer); bitcoinPriceTimer=null; }
+  if(bitcoinImageTimer){ clearInterval(bitcoinImageTimer); bitcoinImageTimer=null; }
+  document.getElementById("website").classList.add("hidden");
+  document.getElementById("authPage").classList.remove("hidden");
+}
+(function(){ const saved=sessionStorage.getItem("lwandaLoggedUser"); const users=getUsers(); if(saved && users[saved]){ currentUser=saved; openWebsite(); } })();
+
+/* ==============================================
+   NAVIGATION
+=============================================== */
+function showSection(id, clicked){
+  document.querySelectorAll("#website section").forEach(x=>x.classList.add("hidden"));
+  const section=document.getElementById(id); if(section) section.classList.remove("hidden");
+  document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
+  if(clicked) clicked.classList.add("active");
+  if(id==="deposit") loadDepositHistory();
+  if(id==="income") loadIncomePage();
+  if(id==="admin") loadAdminData();
+  if(id==="home"){ loadAnnouncements(); if(currentUser){ fetchGoldPrice(); fetchBitcoinPrice(); } }
+  updateData();
+  if(id==="profile") updateProfileDetails();
+}
+
+/* ==============================================
+   PROFILE DETAILS (REGISTRATION + REFERRAL)
+=============================================== */
+function updateProfileDetails(){
+  if(!currentUser) return;
+  const users=getUsers();
+  const user=users[currentUser];
+  if(!user) return;
+  document.getElementById("profilePhone").innerText = user.number || "--";
+  document.getElementById("profileUsername").innerText = user.username || "--";
+  // referral link
+  const base = window.location.origin + window.location.pathname;
+  const refLink = base + "?ref=" + encodeURIComponent(user.number);
+  document.getElementById("referralLinkInput").value = refLink;
+  document.getElementById("refIdDisplay").innerText = user.number;
+}
+
+function copyReferral(){
+  const input = document.getElementById("referralLinkInput");
+  input.select(); input.setSelectionRange(0, 99999);
+  navigator.clipboard?.writeText(input.value).then(()=>{
+    alert("Referral link copied to clipboard!");
+  }).catch(()=>{
+    document.execCommand("copy");
+    alert("Referral link copied!");
+  });
+}
+
+/* ==============================================
+   GOLD MARKET
+=============================================== */
+async function fetchGoldPrice(){
+  const priceBox=document.getElementById("goldPrice"), changeBox=document.getElementById("goldChange"), errorBox=document.getElementById("marketError"), updatedBox=document.getElementById("goldUpdated");
+  priceBox.innerText="Loading..."; changeBox.innerText="Loading 24H change..."; changeBox.classList.remove("down"); errorBox.classList.add("hidden");
+  try{
+    const controller=new AbortController(); const timeout=setTimeout(()=>controller.abort(),10000);
+    const response=await fetch(MARKET_API_URL,{method:"GET",headers:{"Accept":"application/json"},cache:"no-store",signal:controller.signal});
+    clearTimeout(timeout);
+    if(!response.ok) throw new Error("Market API returned HTTP "+response.status);
+    const data=await response.json();
+    const price=Number(data.price??data.close??data.last??data.rate);
+    const change=Number(data.change24h??data.change_percent??data.percentChange??data.change);
+    if(!Number.isFinite(price)) throw new Error("Invalid gold price received.");
+    if(!Number.isFinite(change)) throw new Error("Invalid 24-hour change received.");
+    priceBox.innerText="$"+price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+    const sign=change>=0?"+":""; changeBox.innerText=sign+change.toFixed(2)+"% 24H";
+    if(change<0) changeBox.classList.add("down"); else changeBox.classList.remove("down");
+    const updateTime=data.updatedAt||data.timestamp||new Date().toISOString();
+    updatedBox.innerText=new Date(updateTime).toLocaleTimeString();
+  } catch(error){ console.error("XAU/USD API error:",error); priceBox.innerText="Unavailable"; changeBox.innerText="24H change unavailable"; errorBox.innerHTML="Unable to load live XAU/USD data. Check your market-data server and try again."; errorBox.classList.remove("hidden"); updatedBox.innerText="--"; }
+}
+function startMarketUpdates(){ fetchGoldPrice(); if(marketTimer) clearInterval(marketTimer); marketTimer=setInterval(fetchGoldPrice,60000); }
+
+/* ==============================================
+   BITCOIN
+=============================================== */
+async function fetchBitcoinPrice(){
+  const priceBox=document.getElementById("bitcoinPrice"), changeBox=document.getElementById("bitcoinChange"), updatedBox=document.getElementById("bitcoinUpdated"), errorBox=document.getElementById("bitcoinError");
+  if(!priceBox) return; priceBox.innerText="Loading..."; changeBox.innerText="Loading 24H change..."; changeBox.classList.remove("down"); errorBox.classList.add("hidden");
+  try{
+    const response=await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true",{method:"GET",cache:"no-store",headers:{"Accept":"application/json"}});
+    if(!response.ok) throw new Error("Bitcoin API HTTP "+response.status);
+    const data=await response.json(); const bitcoin=data.bitcoin;
+    if(!bitcoin) throw new Error("Bitcoin data unavailable.");
+    const price=Number(bitcoin.usd); const change=Number(bitcoin.usd_24h_change);
+    if(!Number.isFinite(price)) throw new Error("Invalid Bitcoin price.");
+    priceBox.innerText="$"+price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+    if(Number.isFinite(change)){ const sign=change>=0?"+":""; changeBox.innerText=sign+change.toFixed(2)+"% 24H"; if(change<0) changeBox.classList.add("down"); else changeBox.classList.remove("down"); }
+    if(bitcoin.last_updated_at) updatedBox.innerText=new Date(bitcoin.last_updated_at*1000).toLocaleTimeString(); else updatedBox.innerText=new Date().toLocaleTimeString();
+  } catch(error){ console.error("Bitcoin price error:",error); priceBox.innerText="Unavailable"; changeBox.innerText="Price unavailable"; updatedBox.innerText="--"; errorBox.innerText="Unable to load Bitcoin price right now. The market-data service may be temporarily unavailable."; errorBox.classList.remove("hidden"); }
+}
+const bitcoinImages=["https://images.unsplash.com/photo-1518546305927-5a555bb7020d?auto=format&fit=crop&w=1200&q=85","https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=1200&q=85","https://images.unsplash.com/photo-1605792657660-596af9009e82?auto=format&fit=crop&w=1200&q=85","https://images.unsplash.com/photo-1516245834210-c4c142787335?auto=format&fit=crop&w=1200&q=85"];
+let bitcoinImageIndex=0;
+function changeBitcoinImage(){ const image=document.getElementById("bitcoinImage"); if(!image) return; image.style.opacity="0"; setTimeout(function(){ bitcoinImageIndex++; if(bitcoinImageIndex>=bitcoinImages.length) bitcoinImageIndex=0; image.src=bitcoinImages[bitcoinImageIndex]; image.onload=function(){ image.style.opacity="1"; }; document.querySelectorAll(".bitcoin-dot").forEach(dot=>dot.classList.remove("active")); const activeDot=document.getElementById("btcDot"+bitcoinImageIndex); if(activeDot) activeDot.classList.add("active"); },500); }
+function startBitcoinUpdates(){ fetchBitcoinPrice(); if(bitcoinPriceTimer) clearInterval(bitcoinPriceTimer); bitcoinPriceTimer=setInterval(fetchBitcoinPrice,60000); if(bitcoinImageTimer) clearInterval(bitcoinImageTimer); bitcoinImageTimer=setInterval(changeBitcoinImage,5000); }
+
+/* ==============================================
+   RENDER PLANS
+=============================================== */
+function renderPlans(){
+  const container=document.getElementById("plansContainer");
+  container.innerHTML=plans.map((p,i)=>`
+    <div class="machine-card">
+      <div class="machine-content"><h3>INVESTMENT PLAN ${i+1}</h3>
+        <div class="machine-row">Price: <b>UGX ${p[0].toLocaleString()}</b></div>
+        <div class="machine-row">Return: <b>UGX ${p[1].toLocaleString()}</b></div>
+        <div class="machine-row">Duration: <b>18 Days</b></div>
+      </div>
+      <div class="buy-btn" onclick="buyMachine(${p[0]},${p[1]},18)">BUY MACHINE</div>
+    </div>
+  `).join("");
+}
+
+/* ==============================================
+   DEPOSIT
+=============================================== */
+function submitDeposit(){
+  if(!currentUser){ alert("Please login first."); return; }
+  const amount=parseInt(document.getElementById("depositAmount").value);
+  const transactionId=document.getElementById("transactionId").value.trim();
+  const message=document.getElementById("depositMessage");
+  if(!amount || amount<=0){ message.className="auth-message error"; message.innerText="Enter a valid deposit amount."; return; }
+  if(!transactionId){ message.className="auth-message error"; message.innerText="Enter your transaction ID."; return; }
+  const users=getUsers();
+  const duplicate=Object.values(users).some(u=>(u.deposits||[]).some(d=>d.transactionId.toLowerCase()===transactionId.toLowerCase()));
+  if(duplicate){ message.className="auth-message error"; message.innerText="This transaction ID has already been submitted."; return; }
+  users[currentUser].deposits.push({ id:Date.now(), amount, transactionId, status:"pending", date:new Date().toISOString() });
+  saveUsers(users);
+  document.getElementById("depositAmount").value=""; document.getElementById("transactionId").value="";
+  message.className="auth-message success"; message.innerText="Deposit submitted for admin review.";
+  loadDepositHistory();
+}
+function loadDepositHistory(){
+  if(!currentUser) return;
+  const users=getUsers(); const user=users[currentUser]; const box=document.getElementById("depositHistory");
+  if(!box) return;
+  if(!user.deposits || user.deposits.length===0){ box.innerHTML="No deposits yet."; return; }
+  box.innerHTML=user.deposits.slice().reverse().map(d=>{
+    let statusClass="status-pending"; if(d.status==="approved") statusClass="status-approved"; if(d.status==="rejected") statusClass="status-rejected";
+    return `<div class="deposit-record"><b>Amount:</b> UGX ${Number(d.amount).toLocaleString()}<br><b>Transaction ID:</b> ${escapeHTML(d.transactionId)}<br><b>Date:</b> ${new Date(d.date).toLocaleString()}<br><b>Status:</b> <span class="${statusClass}">${d.status.toUpperCase()}</span></div>`;
+  }).join("");
+}
+
+/* ==============================================
+   BUY MACHINE
+=============================================== */
+function buyMachine(price, totalReturn, days){
+  const users=getUsers(); const user=users[currentUser];
+  if(user.wallet < price){ alert("Insufficient wallet balance. Please deposit first."); showSection("deposit"); return; }
+  user.wallet -= price;
+  user.machines.push({ id:Date.now(), price, return:totalReturn, days, start:new Date().toISOString(), status:"pending" });
+  saveUsers(users);
+  alert("Machine request submitted for admin approval.");
+  updateData();
+}
+
+/* ==============================================
+   INCOME
+=============================================== */
+function loadIncomePage(){
+  if(!currentUser) return;
+  const users=getUsers(); const user=users[currentUser];
+  let total=0; let html="";
+  user.machines.filter(m=>m.status==="active").forEach(m=>{
+    const daysPassed=Math.floor((Date.now()-new Date(m.start))/86400000)+1;
+    const ready=daysPassed>=m.days;
+    if(ready) total+=Number(m.return);
+    html+=`<div style="background:#0a0f1a;border:1px solid #174263;border-radius:8px;padding:12px;margin-bottom:10px"><b style="color:var(--blue)">UGX ${m.price.toLocaleString()} Plan</b><div style="font-size:12px;color:#aaa;margin-top:5px">Day ${daysPassed}/${m.days}</div>${ready?`<button class="btn" style="margin-top:10px" onclick="claimProfit(${m.id})">CLAIM UGX ${m.return.toLocaleString()}</button>`:`<div style="color:#aaa;font-size:11px;margin-top:8px">Not yet matured.</div>`}</div>`;
+  });
+  document.getElementById("totalIncome").innerText="UGX "+total.toLocaleString();
+  document.getElementById("activeMachines").innerText=user.machines.filter(m=>m.status==="active").length;
+  document.getElementById("purchasedList").innerHTML=html||"No purchased machines.";
+}
+function claimProfit(id){
+  const users=getUsers(); const user=users[currentUser]; const machine=user.machines.find(m=>m.id==id);
+  if(!machine || machine.status!=="active") return;
+  const daysPassed=Math.floor((Date.now()-new Date(machine.start))/86400000)+1;
+  if(daysPassed < machine.days){ alert("Machine has not matured yet."); return; }
+  user.balance += Number(machine.return);
+  machine.status="claimed";
+  saveUsers(users);
+  alert("UGX "+Number(machine.return).toLocaleString()+" has been added to your balance.");
+  updateData(); loadIncomePage();
+}
+
+/* ==============================================
+   WITHDRAW
+=============================================== */
+function withdraw(){
+  const users=getUsers(); const user=users[currentUser];
+  if(user.balance<=0){ alert("No withdrawable balance."); return; }
+  const amount=parseInt(prompt("Available balance: UGX "+user.balance.toLocaleString()+"\nEnter withdrawal amount:"));
+  if(!amount || amount<=0 || amount>user.balance){ alert("Invalid withdrawal amount."); return; }
+  user.withdrawals.push({ id:Date.now(), amount, status:"pending", date:new Date().toISOString() });
+  saveUsers(users);
+  alert("Withdrawal request submitted for admin approval.");
+}
+
+/* ==============================================
+   ADMIN
+=============================================== */
+function loginAdmin(){
+  const password=document.getElementById("adminPass").value;
+  if(password===ADMIN_PASS){ document.getElementById("adminLogin").classList.add("hidden"); document.getElementById("adminDashboard").classList.remove("hidden"); loadAdminData(); }
+  else alert("Incorrect admin password.");
+}
+function approveDeposit(userId, depositId){
+  const users=getUsers(); const user=users[userId]; if(!user) return;
+  const deposit=user.deposits.find(d=>d.id==depositId); if(!deposit || deposit.status!=="pending") return;
+  deposit.status="approved"; user.wallet += Number(deposit.amount); saveUsers(users); loadAdminData(); if(currentUser===userId){ updateData(); loadDepositHistory(); }
+}
+function rejectDeposit(userId, depositId){
+  const users=getUsers(); const user=users[userId]; if(!user) return;
+  const deposit=user.deposits.find(d=>d.id==depositId); if(!deposit || deposit.status!=="pending") return;
+  deposit.status="rejected"; saveUsers(users); loadAdminData(); if(currentUser===userId) loadDepositHistory();
+}
+function approveMachine(userId, id){
+  const users=getUsers(); const machine=users[userId]?.machines.find(m=>m.id==id);
+  if(machine){ machine.status="active"; machine.start=new Date().toISOString(); saveUsers(users); loadAdminData(); }
+}
+function approveWithdrawal(userId, id){
+  const users=getUsers(); const user=users[userId]; const withdrawal=user?.withdrawals.find(x=>x.id==id);
+  if(!withdrawal || withdrawal.status!=="pending") return;
+  if(user.balance < withdrawal.amount){ alert("Insufficient user balance."); return; }
+  user.balance -= Number(withdrawal.amount); withdrawal.status="approved"; saveUsers(users); loadAdminData();
+}
+function loadAdminData(){
+  const users=getUsers();
+  let deposits="", withdrawals="", machines="", members="";
+  Object.keys(users).forEach(uid=>{
+    const user=users[uid];
+    (user.deposits||[]).filter(d=>d.status==="pending").forEach(d=>{
+      deposits+=`<div class="admin-item"><b>${escapeHTML(user.username)}</b><br>Phone: ${escapeHTML(uid)}<br>Amount: UGX ${Number(d.amount).toLocaleString()}<br>Transaction ID: <strong>${escapeHTML(d.transactionId)}</strong><br>Date: ${new Date(d.date).toLocaleString()}<div class="admin-buttons"><button class="approve-btn" onclick="approveDeposit('${escapeAttr(uid)}',${d.id})">APPROVE</button><button class="reject-btn" onclick="rejectDeposit('${escapeAttr(uid)}',${d.id})">REJECT</button></div></div>`;
+    });
+    (user.withdrawals||[]).filter(w=>w.status==="pending").forEach(w=>{
+      withdrawals+=`<div class="admin-item"><b>${escapeHTML(user.username)}</b><br>Amount: UGX ${Number(w.amount).toLocaleString()}<div class="admin-buttons"><button class="approve-btn" onclick="approveWithdrawal('${escapeAttr(uid)}',${w.id})">APPROVE</button></div></div>`;
+    });
+    (user.machines||[]).filter(m=>m.status==="pending").forEach(m=>{
+      machines+=`<div class="admin-item"><b>${escapeHTML(user.username)}</b><br>Machine: UGX ${Number(m.price).toLocaleString()}<br>Return: UGX ${Number(m.return).toLocaleString()}<div class="admin-buttons"><button class="approve-btn" onclick="approveMachine('${escapeAttr(uid)}',${m.id})">APPROVE</button></div></div>`;
+    });
+    members+=`<div class="admin-item"><b>${escapeHTML(user.username)}</b><br>Phone: ${escapeHTML(uid)}<br>Registered: ${new Date(user.registeredAt).toLocaleString()}</div>`;
+  });
+  document.getElementById("pendingDeposits").innerHTML=deposits||"No pending deposits.";
+  document.getElementById("pendingWithdrawals").innerHTML=withdrawals||"No pending withdrawals.";
+  document.getElementById("pendingMachines").innerHTML=machines||"No pending machines.";
+  document.getElementById("newMembers").innerHTML=members||"No members.";
+  document.getElementById("adminStats").innerHTML=`Total Users: <b style="color:var(--blue)">${Object.keys(users).length}</b>`;
+  loadAdminAnnouncements();
+}
+
+/* ==============================================
+   ANNOUNCEMENTS
+=============================================== */
+function publishAnnouncement(){
+  const title=document.getElementById("announcementTitle").value.trim();
+  const text=document.getElementById("announcementText").value.trim();
+  if(!title || !text){ alert("Enter both a title and message."); return; }
+  const announcements=getAnnouncements();
+  announcements.push({ id:Date.now(), title, text, date:new Date().toISOString() });
+  saveAnnouncements(announcements);
+  document.getElementById("announcementTitle").value=""; document.getElementById("announcementText").value="";
+  loadAnnouncements(); loadAdminAnnouncements();
+}
+function deleteAnnouncement(id){ const announcements=getAnnouncements(); saveAnnouncements(announcements.filter(x=>x.id!=id)); loadAnnouncements(); loadAdminAnnouncements(); }
+function loadAnnouncements(){
+  const box=document.getElementById("publicAnnouncements"); if(!box) return;
+  const announcements=getAnnouncements();
+  if(announcements.length===0){ box.innerHTML="No announcements available."; return; }
+  box.innerHTML=announcements.slice().reverse().map(a=>`<div class="announcement"><div class="announcement-title">${escapeHTML(a.title)}</div><div class="announcement-text">${escapeHTML(a.text)}</div><div class="announcement-date">${new Date(a.date).toLocaleString()}</div></div>`).join("");
+}
+function loadAdminAnnouncements(){
+  const box=document.getElementById("adminAnnouncements"); if(!box) return;
+  const announcements=getAnnouncements();
+  if(announcements.length===0){ box.innerHTML="No announcements."; return; }
+  box.innerHTML=announcements.slice().reverse().map(a=>`<div class="admin-item"><b>${escapeHTML(a.title)}</b><br>${escapeHTML(a.text)}<br><small style="color:#777">${new Date(a.date).toLocaleString()}</small><div class="admin-buttons"><button class="delete-btn" onclick="deleteAnnouncement(${a.id})">DELETE</button></div></div>`).join("");
+}
+
+/* ==============================================
+   UPDATE DATA
+=============================================== */
+function updateData(){
+  if(!currentUser) return;
+  const users=getUsers(); const user=users[currentUser];
+  if(!user) return;
+  document.getElementById("wallet").innerText="UGX "+Number(user.wallet).toLocaleString();
+  document.getElementById("balance").innerText="UGX "+Number(user.balance).toLocaleString();
+  document.getElementById("teamCount").innerText=user.machines.filter(m=>m.status==="active").length;
+  document.getElementById("loggedUsername").innerText=user.username;
+  updateProfileDetails();
+}
+
+/* ==============================================
+   ESCAPE HELPERS
+=============================================== */
+function escapeHTML(v){ return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
+function escapeAttr(v){ return String(v).replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
+
+// initial profile update
+updateProfileDetails();
+</script>
+</body>
+</html>
